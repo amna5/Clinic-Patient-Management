@@ -7,7 +7,7 @@ public class PatientManager implements Manageable<Patient> {
     @Override
     public void add(Patient p) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true));
-        writer.write(p.getId() + "," + p.getName() + "," + p.getAge() + "," + p.getDiagnosis());
+        writer.write(p.getId() + "," + p.getName() + "," + p.getAge() + "," + p.getDiagnosis() + "," + p.getDoctorAssigned());
         writer.newLine();
         writer.close();
     }
@@ -29,7 +29,7 @@ public class PatientManager implements Manageable<Patient> {
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME));
         for (Patient p : list) {
-            writer.write(p.getId() + "," + p.getName() + "," + p.getAge() + "," + p.getDiagnosis());
+            writer.write(p.getId() + "," + p.getName() + "," + p.getAge() + "," + p.getDiagnosis() + "," + p.getDoctorAssigned());
             writer.newLine();
         }
         writer.close();
@@ -44,7 +44,7 @@ public class PatientManager implements Manageable<Patient> {
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME));
         for (Patient p : list) {
-            writer.write(p.getId() + "," + p.getName() + "," + p.getAge() + "," + p.getDiagnosis());
+            writer.write(p.getId() + "," + p.getName() + "," + p.getAge() + "," + p.getDiagnosis() + "," + p.getDoctorAssigned());
             writer.newLine();
         }
         writer.close();
@@ -71,13 +71,14 @@ public class PatientManager implements Manageable<Patient> {
         BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME));
         String line;
         while ((line = reader.readLine()) != null) {
-            String[] parts = line.split(",", 4);
-            if (parts.length == 4) {
+            String[] parts = line.split(",", 5); // <-- changed from 4 to 5
+            if (parts.length == 5) {
                 String id = parts[0];
                 String name = parts[1];
                 int age = Integer.parseInt(parts[2]);
                 String diagnosis = parts[3];
-                list.add(new Patient(id, name, age, diagnosis));
+                String doctorAssigned = parts[4];
+                list.add(new Patient(id, name, age, diagnosis, doctorAssigned));
             }
         }
         reader.close();

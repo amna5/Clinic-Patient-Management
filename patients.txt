@@ -1,6 +1,7 @@
-A001,Bob,33,Flu
-A002,Kate,22,Fever
-A003,Hanin,20,Scoliosis
-A004,Adam,25,Hypertension
-A005,Damia,21,Migraine
-A006,Amna,20,Hypothermia
+A001,Bob,33,Flu,Dr. Smith
+A002,Kate,22,Fever,Dr. Lee
+A003,Hanin,20,Scoliosis,Dr. Lee
+A004,Adam,25,Hypertension,Dr. Patel
+A005,Damia,21,Migraine,Dr. Johnson
+A006,Amna,20,Hypothermia,Dr. Lee
+

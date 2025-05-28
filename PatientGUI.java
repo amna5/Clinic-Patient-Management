@@ -6,20 +6,21 @@ import javax.swing.table.DefaultTableModel;
 
 public class PatientGUI extends JFrame {
     private JTextField txtId, txtName, txtAge, txtDiagnosis, txtSearchId;
+    private JComboBox<String> comboDoctor;
     private JTable table;
     private DefaultTableModel tableModel;
     private PatientManager manager;
 
     public PatientGUI() {
         manager = new PatientManager();
-        setTitle("Clinic Management System");
+        setTitle("🏥 Clinic Management System");
         setSize(600, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null); // Centers the frame
 
         // Input Panel
-        JPanel inputPanel = new JPanel(new GridLayout(5, 2));
+        JPanel inputPanel = new JPanel(new GridLayout(6, 2));
         inputPanel.setBorder(BorderFactory.createTitledBorder("Patient Details"));
 
         inputPanel.add(new JLabel("ID:"));
@@ -37,6 +38,11 @@ public class PatientGUI extends JFrame {
         inputPanel.add(new JLabel("Diagnosis:"));
         txtDiagnosis = new JTextField();
         inputPanel.add(txtDiagnosis);
+
+        inputPanel.add(new JLabel("Doctor Assigned:"));
+        comboDoctor = new JComboBox<>(new String[] { "Dr. Smith", "Dr. Johnson", "Dr. Lee", "Dr. Patel" });
+        inputPanel.add(comboDoctor);
+
 
         inputPanel.add(new JLabel("Search by ID:"));
         txtSearchId = new JTextField();
@@ -59,7 +65,7 @@ public class PatientGUI extends JFrame {
         buttonPanel.add(btnRefresh);
 
         // Table Panel
-        String[] columnNames = { "ID", "Name", "Age", "Diagnosis" };
+        String[] columnNames = { "ID", "Name", "Age", "Diagnosis" , "Doctor Assigned"};
         tableModel = new DefaultTableModel(columnNames, 0);
         table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
@@ -86,6 +92,7 @@ public class PatientGUI extends JFrame {
                 txtName.setText(table.getValueAt(table.getSelectedRow(), 1).toString());
                 txtAge.setText(table.getValueAt(table.getSelectedRow(), 2).toString());
                 txtDiagnosis.setText(table.getValueAt(table.getSelectedRow(), 3).toString());
+                comboDoctor.setSelectedItem(table.getValueAt(table.getSelectedRow(), 4).toString());
             }
         });
 
@@ -98,6 +105,7 @@ public class PatientGUI extends JFrame {
         String name = txtName.getText().trim();
         String ageStr = txtAge.getText().trim();
         String diagnosis = txtDiagnosis.getText().trim();
+        String DoctorAssigned = comboDoctor.getSelectedItem().toString();
 
         if (id.isEmpty() || name.isEmpty() || ageStr.isEmpty() || diagnosis.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill all fields.");
@@ -106,7 +114,7 @@ public class PatientGUI extends JFrame {
 
         try {
             int age = Integer.parseInt(ageStr);
-            Patient patient = new Patient(id, name, age, diagnosis);
+            Patient patient = new Patient(id, name, age, diagnosis,DoctorAssigned);
             manager.add(patient);
             JOptionPane.showMessageDialog(this, "Patient added successfully.");
             clearFields();
@@ -123,6 +131,7 @@ public class PatientGUI extends JFrame {
         String name = txtName.getText().trim();
         String ageStr = txtAge.getText().trim();
         String diagnosis = txtDiagnosis.getText().trim();
+        String DoctorAssigned = comboDoctor.getSelectedItem().toString();
 
         if (id.isEmpty() || name.isEmpty() || ageStr.isEmpty() || diagnosis.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill all fields.");
@@ -131,7 +140,7 @@ public class PatientGUI extends JFrame {
 
         try {
             int age = Integer.parseInt(ageStr);
-            Patient patient = new Patient(id, name, age, diagnosis);
+            Patient patient = new Patient(id, name, age, diagnosis,DoctorAssigned);
             manager.update(patient);
             JOptionPane.showMessageDialog(this, "Patient updated successfully.");
             clearFields();
@@ -174,6 +183,7 @@ public class PatientGUI extends JFrame {
                 txtName.setText(patient.getName());
                 txtAge.setText(String.valueOf(patient.getAge()));
                 txtDiagnosis.setText(patient.getDiagnosis());
+                comboDoctor.setSelectedItem(patient.getDoctorAssigned());
             } else {
                 JOptionPane.showMessageDialog(this, "Patient not found.");
             }
@@ -187,7 +197,7 @@ public class PatientGUI extends JFrame {
             List<Patient> patients = manager.getAll();
             tableModel.setRowCount(0); // Clear previous data
             for (Patient p : patients) {
-                Object[] row = { p.getId(), p.getName(), p.getAge(), p.getDiagnosis() };
+                Object[] row = { p.getId(), p.getName(), p.getAge(), p.getDiagnosis(), p.getDoctorAssigned() };
                 tableModel.addRow(row);
             }
         } catch (IOException ex) {
@@ -201,6 +211,7 @@ public class PatientGUI extends JFrame {
         txtAge.setText("");
         txtDiagnosis.setText("");
         txtSearchId.setText("");
+        comboDoctor.setSelectedIndex(0);
     }
 
     public static void main(String[] args) {
