@@ -2,18 +2,21 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class PatientGUI extends JFrame {
     private JTextField txtId, txtName, txtAge, txtDiagnosis, txtSearchId;
-    private JTextArea txtArea;
+    private JTable table;
+    private DefaultTableModel tableModel;
     private PatientManager manager;
 
     public PatientGUI() {
         manager = new PatientManager();
         setTitle("Clinic Management System");
-        setSize(500, 600);
+        setSize(600, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        setLocationRelativeTo(null); // Centers the frame
 
         // Input Panel
         JPanel inputPanel = new JPanel(new GridLayout(5, 2));
@@ -42,7 +45,7 @@ public class PatientGUI extends JFrame {
         add(inputPanel, BorderLayout.NORTH);
 
         // Button Panel
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 5));
+        JPanel buttonPanel = new JPanel();
         JButton btnAdd = new JButton("Add");
         JButton btnUpdate = new JButton("Update");
         JButton btnDelete = new JButton("Delete");
@@ -55,14 +58,19 @@ public class PatientGUI extends JFrame {
         buttonPanel.add(btnSearch);
         buttonPanel.add(btnRefresh);
 
-        add(buttonPanel, BorderLayout.CENTER);
-
-        // Text Area
-        txtArea = new JTextArea();
-        txtArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(txtArea);
+        // Table Panel
+        String[] columnNames = { "ID", "Name", "Age", "Diagnosis" };
+        tableModel = new DefaultTableModel(columnNames, 0);
+        table = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Patient Records"));
-        add(scrollPane, BorderLayout.SOUTH);
+
+        // Combine buttonPanel and table into one panel
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(buttonPanel, BorderLayout.NORTH);
+        centerPanel.add(scrollPane, BorderLayout.CENTER);
+
+        add(centerPanel, BorderLayout.CENTER);
 
         // Button Actions
         btnAdd.addActionListener(e -> addPatient());
@@ -70,6 +78,16 @@ public class PatientGUI extends JFrame {
         btnDelete.addActionListener(e -> deletePatient());
         btnSearch.addActionListener(e -> searchPatient());
         btnRefresh.addActionListener(e -> loadPatients());
+
+        // Table row click listener to populate form
+        table.getSelectionModel().addListSelectionListener(event -> {
+            if (!event.getValueIsAdjusting() && table.getSelectedRow() != -1) {
+                txtId.setText(table.getValueAt(table.getSelectedRow(), 0).toString());
+                txtName.setText(table.getValueAt(table.getSelectedRow(), 1).toString());
+                txtAge.setText(table.getValueAt(table.getSelectedRow(), 2).toString());
+                txtDiagnosis.setText(table.getValueAt(table.getSelectedRow(), 3).toString());
+            }
+        });
 
         loadPatients();
         setVisible(true);
@@ -167,10 +185,10 @@ public class PatientGUI extends JFrame {
     private void loadPatients() {
         try {
             List<Patient> patients = manager.getAll();
-            txtArea.setText("");
+            tableModel.setRowCount(0); // Clear previous data
             for (Patient p : patients) {
-                txtArea.append("ID: " + p.getId() + ", Name: " + p.getName() +
-                        ", Age: " + p.getAge() + ", Diagnosis: " + p.getDiagnosis() + "\n");
+                Object[] row = { p.getId(), p.getName(), p.getAge(), p.getDiagnosis() };
+                tableModel.addRow(row);
             }
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
