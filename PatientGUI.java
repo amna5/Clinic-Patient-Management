@@ -31,7 +31,7 @@ public class PatientGUI extends JFrame {
         txtName = new JTextField();
         inputPanel.add(txtName);
 
-        inputPanel.add(new JLabel("Age:"));
+        inputPanel.add(new JLabel("Age:")); 
         txtAge = new JTextField();
         inputPanel.add(txtAge);
 
@@ -83,7 +83,10 @@ public class PatientGUI extends JFrame {
         btnUpdate.addActionListener(e -> updatePatient());
         btnDelete.addActionListener(e -> deletePatient());
         btnSearch.addActionListener(e -> searchPatient());
-        btnRefresh.addActionListener(e -> loadPatients());
+        btnRefresh.addActionListener(e -> {
+            loadPatients();
+            clearFields();
+        });
 
         // Table row click listener to populate form
         table.getSelectionModel().addListSelectionListener(event -> {
